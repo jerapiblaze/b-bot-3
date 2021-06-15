@@ -27,13 +27,15 @@ const discordRegData = {
 }
 
 const config = {
-    discordRegData // dont-do-any-thing-with-this-line
-    allowInDM: false,
+    discordRegData, // dont-do-any-thing-with-this-line
+    forceRegister: false,
+    requiredPermissions:[],
+    allowDM: false,
     ownerOnly: false,
     disabled: false
 }
 
-const exec = (client, interaction) => {
+const exec = (interaction) => {
     // do something with the input interaction
 }
 

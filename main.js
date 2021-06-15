@@ -17,7 +17,8 @@ global.sleep = (milliseconds) => {
         currentDate = Date.now();
     } while (currentDate - date < milliseconds);
 }
-global.Tools = require(`${__myModules}/@globalTools/index.js`)
+global.globalTools = require(`${__myModules}/@globalTools/index.js`).exec()
+console.log(globalTools)
 
 // initialize environment variables
 if (__botConfig.devmode.useDotEnv){
@@ -57,11 +58,12 @@ childLogger.info(`Hello. I am B-bot`)
 
 // initialize discord client
 const Discord = require('discord.js')
+const { features } = require('process')
 require('discord-reply');
 const client = new Discord.Client({ partials: ['MESSAGE', 'CHANNEL', 'REACTION', 'USER', 'GUILD_MEMBER'] })
 
 // log errors
-client.on('rateLimit', (info) => {
+/* client.on('rateLimit', (info) => {
     const { timeout } = info
     childLogger.warn(`RATE_LIMIT REACHED: cooldown ${timeout}ms`)
 })
@@ -97,19 +99,31 @@ process.on('exit', () => exitProtocol('exit', null))
 process.on('uncaughtException', (err) => exitProtocol('uncaughtException', err))
 process.on('SIGINT', () => exitProtocol('SIGINT', null))
 process.on('SIGQUIT', () => exitProtocol('SIGQUIT', null))
-process.on('SIGTERM', () => exitProtocol('SIGTERM', null))
+process.on('SIGTERM', () => exitProtocol('SIGTERM', null)) */
 
 // initialze modules
 const slashCommands = require(`${__myModules}/slashCommands/index.js`)
+slashCommands.setClient(client)
 const serviceWorkers = require(`${__myModules}/serviceWorkers/index.js`)
+serviceWorkers.setClient(client)
 
 // login
 childLogger.debug('Connecting to Discord')
-client.login(process.env.DISCORD_APP_TOKEN).catch(err => {
+client.login(process.env.DISCORD_BOT_TOKEN).catch(err => {
     childLogger.error(err)
 })
 
 // go go go
-client.on('ready', () => {
-    
+client.on('ready', async () => {
+    if (__botConfig.devmode.globalPublish){
+        await slashCommands.registerCommands()
+    }
+    for (var g of __botConfig.devmode.testGuildID){
+        await slashCommands.registerCommands(g)
+    }
+
+    serviceWorkers.exec()
+    slashCommands.exec()
+    client.user.setPresence(__botConfig.presence)
+    console.log('Ready to go.')
 })

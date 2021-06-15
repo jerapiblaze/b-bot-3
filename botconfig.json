@@ -2,11 +2,10 @@
     "devmode": {
         "useDotEnv":true,
         "testGuildID": [
-            "766901221931221003",
-            "848179045370953748"
+            "766901221931221003"
         ],
         "ownerUID": "423764796375171073",
-        "publishToGlobal": false,
+        "globalPublish": false,
         "patchMode": true,
         "logging": {
             "useConsole": true,

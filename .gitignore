@@ -1,4 +1,7 @@
 .env
 package-lock.json
 data/@data/*
+data/logs/*
+data/.temp/*
+test/*
 node_modules

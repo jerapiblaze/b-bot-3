@@ -3,11 +3,10 @@ filename structure: `${group}_${name}.js`
 // example.js
 const config = {
     eventName: `SOME_EVENT_NAME`
-    eventArgs: `some_args`
     disabled: false
 }
 
-const exec = (client, data) => {
+const exec = (event_args) => {
     // do something with emited event data
 }
 
