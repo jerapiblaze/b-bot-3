@@ -35,10 +35,9 @@ global.logger = winston.createLogger({
         timestamp(),
         json()
     ),
-    defaultMeta: { service: 'B-bot' },
+    defaultMeta: { service: 'B-bot-beta' },
     transports: [
-        new winston.transports.File({ filename: `${__rootDir}/data/logs/err.log`, level: 'error' }),
-        new winston.transports.File({ filename: `${__rootDir}/data/logs/all.log` }),
+        new winston.transports.File({ filename: `${__rootDir}/data/logs/err.log`, level: 'error' })
     ],
 });
 
@@ -63,7 +62,7 @@ require('discord-reply');
 const client = new Discord.Client({ partials: ['MESSAGE', 'CHANNEL', 'REACTION', 'USER', 'GUILD_MEMBER'] })
 
 // log errors
-/* client.on('rateLimit', (info) => {
+client.on('rateLimit', (info) => {
     const { timeout } = info
     childLogger.warn(`RATE_LIMIT REACHED: cooldown ${timeout}ms`)
 })
@@ -99,7 +98,7 @@ process.on('exit', () => exitProtocol('exit', null))
 process.on('uncaughtException', (err) => exitProtocol('uncaughtException', err))
 process.on('SIGINT', () => exitProtocol('SIGINT', null))
 process.on('SIGQUIT', () => exitProtocol('SIGQUIT', null))
-process.on('SIGTERM', () => exitProtocol('SIGTERM', null)) */
+process.on('SIGTERM', () => exitProtocol('SIGTERM', null))
 
 // initialze modules
 const slashCommands = require(`${__myModules}/slashCommands/index.js`)
