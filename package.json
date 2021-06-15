@@ -12,5 +12,11 @@
     "slash-commands"
   ],
   "author": "jerapiblaze",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "discord-reply": "^0.1.2",
+    "discord.js": "^12.5.3",
+    "dotenv": "^10.0.0",
+    "winston": "^3.3.3"
+  }
 }
