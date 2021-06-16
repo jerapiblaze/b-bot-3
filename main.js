@@ -6,9 +6,10 @@ global.__rootDir = __dirname
 global.__tempDir = `${__rootDir}/data/temp`
 global.__myModules = `${__rootDir}/modules`
 global.__dataDir = `${__rootDir}/data/@data`
+global.__assetsDir = `${__rootDir}/data/@assets`
 
 global.__botConfig = require(`${__rootDir}/botconfig.json`)
-global.__URLs = require(`${__dataDir}/urls.json`)
+global.__URLs = require(`${__assetsDir}/urls.json`)
 
 global.sleep = (milliseconds) => {
     const date = Date.now();
@@ -17,8 +18,10 @@ global.sleep = (milliseconds) => {
         currentDate = Date.now();
     } while (currentDate - date < milliseconds);
 }
+global.random = (min, max) => {
+    return Math.floor(Math.random() * (max - min) ) + min
+}
 global.globalTools = require(`${__myModules}/@globalTools/index.js`).exec()
-console.log(globalTools)
 
 // initialize environment variables
 if (__botConfig.devmode.useDotEnv){

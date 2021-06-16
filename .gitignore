@@ -5,3 +5,5 @@ data/logs/*
 data/.temp/*
 test/*
 node_modules
+workspace.code-workspace
+.vscode

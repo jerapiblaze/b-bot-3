@@ -1,6 +1,5 @@
 const commands = globalTools.index(`${__myModules}/slashCommands/commands`, '*')
-const fetchMessage = require('./tools/fetchMessage.js').exec
-const fetchMember = require('./tools/fetchMember.js').exec
+const { fetchMember, fetchMessage} = globalTools
 const { APIMessage } = require("discord.js")
 
 var client = null
@@ -31,18 +30,16 @@ const registerCommands = async (guildID) => {
     // delete unknown commands from discord and add unregistered commands to queue
     var registerQueue = Object.keys(commands)
     for (let command of registeredCommands) {
-        var i = registerQueue.findIndex(c => {
-            return c === commands.name
-        })
+        var i = registerQueue.indexOf(command.name)
         if (i === -1) {
-            await deleteCommand(guildID, command.id)
+            //await deleteCommand(guildID, command.id)
         } else {
             if ((!commands[command.name].config.forceRegister) || commands[command.name].config.disabled) {
                 registerQueue.splice(i, 1)
             }
         }
     }
-
+    
     // register go go go
     for (let command of registerQueue) {
         await commandsAPIendpoint.post({
@@ -58,6 +55,7 @@ const perms_check = (member, command) => {
                 return false
             }
         }
+        return true
     } else {
         return true
     }
@@ -126,11 +124,20 @@ const exec = () => {
             }
         }
 
+        interaction.client = client
         interaction.originalMessage = originalMessage
         interaction.originalMember = originalMember
         interaction.commandOptions = options_parse(interaction.data.options)
 
-        const commandOutput = await command.exec(interaction)
+        var commandOutput = null
+        if (command.exec.constructor.name === "AsyncFunction"){
+            commandOutput = await command.exec(interaction)
+        } else {
+            commandOutput = command.exec(interaction)
+        }
+        if (!commandOutput){
+            commandOutput = '= No output ='
+        }
         interactionReply(interaction, commandOutput)
     })
 }

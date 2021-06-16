@@ -17,6 +17,14 @@
     "discord-reply": "^0.1.2",
     "discord.js": "^12.5.3",
     "dotenv": "^10.0.0",
-    "winston": "^3.3.3"
+    "winston": "^3.3.3",
+    "encrypt-with-password": "^1.0.0",
+    "fast-average-color-node": "^1.0.3",
+    "normalize-url": "^6.0.0",
+    "password-strength-calc": "^1.0.3",
+    "ping": "^0.4.1",
+    "query-string": "^7.0.0",
+    "tinyurl": "^1.1.7",
+    "worldometer-coronavirus-info": "^3.0.0"
   }
 }

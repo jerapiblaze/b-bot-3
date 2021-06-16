@@ -1,12 +1,12 @@
-const fetchChannel = require('./fetchChannel.js').exec
-const fetchGuild = require('./fetchGuild.js').exec
-
 const metadata = {
     name: `fetchMessage`,
     description: `fetch message`,
     version: `1.0.0`,
     author: `jerapiblaze`,
 }
+
+const fetchChannel = require('./fetchChannel.js').exec
+const fetchGuild = require('./fetchGuild.js').exec
 
 const exec = async (client, channel_id, message_id) => {
     var channel = await fetchChannel(client, channel_id)
