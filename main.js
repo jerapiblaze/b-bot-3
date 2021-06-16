@@ -127,5 +127,5 @@ client.on('ready', async () => {
     serviceWorkers.exec()
     slashCommands.exec()
     client.user.setPresence(__botConfig.presence)
-    console.log('Ready to go.')
+    childLogger.info('Ready to go.')
 })
