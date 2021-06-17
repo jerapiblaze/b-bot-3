@@ -36,7 +36,12 @@ function chunkString(str, length) {
 const exec = async (interaction) => {
     const options = interaction.commandOptions
     var time = Date.now()
-    var output = await eval(options.code)
+    var output = '= no output ='
+    try {
+        output = await eval(options.code)
+    } catch(e) {
+        output = e.toString()
+    }
     if ((output) && (output.toString().length > 0)) {
         output = chunkString(output.toString(), 1000)
     } else {

@@ -5,12 +5,12 @@ const metadata = {
     author: `jerapiblaze`
 }
 const config = {
-    eventName: `message`,
+    eventName: `messageReactionAdd`,
     disabled: true
 }
 
-const exec = (message) => {
-    console.log(`[message_scanner](${message.channel.id}_${message.id}) $ ${message.content}`)
+const exec = (reaction, user) => {
+    console.log(`[reactionAdd_scanner](${reaction.message.channel.id}_${reaction.message.id}) $ ${user.id} ${reaction.emoji.name.toString()}`)
 }
 
 module.exports = {
