@@ -1,18 +1,37 @@
 json
 filename structure: `${server_id}_${type}.json`
 
-example: `123456789012345678_@settings.json`
+example: `123456789012345678_pageSettings.json`
+```json
+{
+    "page_code":{
+        "tags":[
+            {   "name":"tag_name",
+                "censor":true,
+                "icon":"🤡",
+                "note":"tag's note/warning"
+            }
+        ],
+        "prefix":{
+            "censor":".",
+            "showTagNote":true,
+            "pageHastag":true,
+        },
+        "surfix":{
+            "cfsIndexType":"id, counter, none",
+            "showDate":true,
+            "note":"Ghi nhớ: đọc cfs với một chiếc đầu lạnh, suy nghĩ kĩ rồi mới hành động"
+        },
+        "modAliases":{
+            "user_id":"alias"
+        }
+    }
+}
+```
 
-example: `123456789012345678_pageConfig_@settings.json`
-example: `123456789012345678_pageConfig_${pageCode}_@settings.json`
-example: `123456789012345678_pageConfig_${pageCode}_tags.json`
-example: `123456789012345678_pageConfig_${pageCode}_aliases.json`
-
-example: `123456789012345678_games_${gameCode}.json`
-example: `123456789012345678_games_@settings.json`
-
-example: `123456789012345678_music_@settings.json`
-example: `123456789012345678_music_playlist.json`
-
-others
-filename stucture: `${server_id}_${name}.${extension}`
+example: `123456789012345678_pageConters.json`
+```json
+{
+    "page_code":0
+}
+```
