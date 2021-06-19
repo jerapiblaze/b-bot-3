@@ -102,7 +102,7 @@ const exec = async (message) => {
             globalTools.pageData.updateSettings()
             globalTools.pageData.updateCounters()
 
-            message.lineReplyNoMention('file imported')
+            message.lineReplyNoMention('🔥 file imported')
         } catch(e){
             message.lineReplyNoMention(`error: ${e}`)
         }
