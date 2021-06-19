@@ -11,6 +11,7 @@ const config = {
 
 const {fetchMessage, fetchMember} = globalTools
 const exec = async (reaction, user) => {
+    if ((reaction.message.channel.type === 'dm') || (!reaction.message.guild)) return
     if (!(reaction.emoji.name.toString() === '🔁')) return
     const member = await fetchMember(reaction.client, reaction.message.guild.id, user.id)
     const allowedRole = member.roles.cache.find(r => r.name === 'cfs-moderator')

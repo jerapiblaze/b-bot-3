@@ -112,7 +112,7 @@ const exec = () => {
             return
         }
         if (!command.config.allowDM) {
-            if (originalMessage.channel.type === 'dm') {
+            if ((originalMessage.channel.type === 'dm') || (!originalMessage.guild)) {
                 interactionReply(interaction, `🚫 This command cannot be used in DirectMessage channel`)
                 return
             }

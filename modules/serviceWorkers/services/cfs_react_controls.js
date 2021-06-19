@@ -15,6 +15,7 @@ const { fetchMember, fetchMessage } = globalTools
 const FB = require('fb')
 
 const exec = async (reaction, user) => {
+    if ((reaction.message.channel.type === 'dm') || (!reaction.message.guild)) return
     const member = await fetchMember(reaction.client, reaction.message.guild.id, user.id)
     const allowedRole = member.roles.cache.find(r => r.name === 'cfs-moderator')
     if (!allowedRole) return

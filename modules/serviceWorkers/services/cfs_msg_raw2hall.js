@@ -12,6 +12,7 @@ const config = {
 }
 
 const exec = async (message) => {
+    if ((message.channel.type === 'dm') || (!message.guild)) return
     const pageSettings = cfsPageSettings[message.guild.id]
     if (!pageSettings) return
 

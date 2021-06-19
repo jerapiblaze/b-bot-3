@@ -22,6 +22,7 @@ const isSnowflake = (n) => {
 }
 
 const exec = async (message) => {
+    if ((message.channel.type === 'dm') || (!message.guild)) return
     if (!message.content.startsWith('/cfs')) return
 
     const commandArgs = message.content.split(' ')

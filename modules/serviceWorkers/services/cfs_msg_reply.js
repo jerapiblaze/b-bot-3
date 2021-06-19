@@ -24,6 +24,8 @@ const isSnowflake = (n) => {
 }
 
 const exec = async (message) => {
+    if ((message.channel.type === 'dm') || (!message.guild)) return
+
     if (!message.content.startsWith('/')) return
 
     const serverPageSettings = cfsPageSettings[message.guild.id]
