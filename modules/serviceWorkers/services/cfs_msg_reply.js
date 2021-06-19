@@ -103,7 +103,7 @@ const exec = async (message) => {
     // add reply
     commandArgs.splice(0, 1)
     const replyContent = commandArgs.join('/')
-    const userAlias = pageSettings.modAliases[message.author.id] ? `${pageSettings.modAliases[message.author.id]}(admin/mod)` : `${message.author.tag}(member)`
+    const userAlias = pageSettings.modAliases[message.author.id] ? `${pageSettings.modAliases[message.author.id]} (admin/mod)` : `${message.author.tag} (member)`
     const replyField = { name: `ReplyID: ${message.id}`, value: `>>> ${userAlias}\n${replyContent}` }
 
     let i = embedFields.findIndex(f => f.name === 'Tags')
