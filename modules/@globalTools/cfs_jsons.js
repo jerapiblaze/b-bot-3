@@ -6,15 +6,14 @@ const metadata = {
 }
 
 const fs = require('fs')
-const workDir = `${__dataDir}`
 
 const readJson = (end) => {
-    const files = fs.readdirSync(workDir).filter(f => f.endsWith(end))
+    const files = fs.readdirSync(__dataDir).filter(f => f.endsWith(end))
     var output = {}
     for (var f of files) {
         var content = {}
         try {
-            content = JSON.parse(fs.readFileSync(`${workDir}/${f}`))
+            content = JSON.parse(fs.readFileSync(`${__dataDir}/${f}`))
         } catch (e) {
             content.error = e
         }
@@ -25,7 +24,7 @@ const readJson = (end) => {
 }
 
 const writeJson = (name, data) => {
-    fs.writeFileSync(`${__workDir}/${name}`, JSON.stringify(data))
+    fs.writeFileSync(`${__dataDir}/${name}`, JSON.stringify(data))
 }
 
 global.cfsPageSettings = {}

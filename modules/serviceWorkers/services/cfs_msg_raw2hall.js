@@ -19,8 +19,14 @@ const exec = async (message) => {
     if (!pageSettings[rawName[0]]) return
     if (!(rawName[1] === 'raw')) return
     
-    var target = message.client.channels.cache.find(c => c.name === `${rawName[0]}-hall`)
-
+    const target = message.client.channels.cache.find(c => {
+        if (c.name === `${rawName[0]}-hall`){
+            if (c.guild.id === message.guild.id){
+                return true
+            }
+        }
+        return false
+    })
     if (!target) return
 
     target.send(message.embeds[0]).then(m => {

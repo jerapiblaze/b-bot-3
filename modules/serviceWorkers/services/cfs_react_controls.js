@@ -64,6 +64,15 @@ const exec = async (reaction, user) => {
 
     if (reaction.emoji.name.toString() === '✅') {
         message.react('⏳')
+
+        // pre-load counter
+        if (!cfsPageCounters[reaction.message.guild.id]){
+            cfsPageCounters[reaction.message.guild.id] = {}
+        }
+        if (!cfsPageCounters[reaction.message.guild.id][rawName[0]]){
+            cfsPageCounters[reaction.message.guild.id][rawName[0]] = 0
+        }
+
         // post compose
         var postContent = ''
         postContent += pageSettings.prefix.pageHastag ? `#${rawName[0]}\n` : ''
@@ -94,18 +103,19 @@ const exec = async (reaction, user) => {
         var replies = []
         for (let f of fields) {
             if (f.name === 'Tags') continue
-            if (f.name.startsWith('Reply: ')) {
+            if (f.name.startsWith('ReplyID: ')) {
                 replies.push(f.value)
                 continue
             }
             postContent += f.name.endsWith('(cont.)') ? f.value : `\n${f.value}`
         }
 
-        postContent += '\n'
+        postContent += '\n\n'
         for (let r of replies) {
             postContent += `${r}\n`
         }
 
+        postContent += '\n'
         postContent += tagField ? `\n[tags] ${tagField.value}\n\n` : ``
 
         postContent += `====\n`
@@ -113,21 +123,22 @@ const exec = async (reaction, user) => {
         postContent += pageSettings.surfix.showDate ? `[time] ${message.embeds[0].footer.text}\n` : ''
 
         switch (pageSettings.surfix.cfsIndexType) {
+            case 'both': {
+
+            }
             case 'id': {
                 postContent += `[cfsID] ${message.id}\n`
-                break
+                if (!(pageSettings.surfix.cfsIndexType === 'both')) break
             };
             case 'counter': {
-                postContent += `#0\n`
-                break
-            };
-            case 'none': {
-                break
+                cfsPageCounters[reaction.message.guild.id][rawName[0]]++
+                postContent += `[cfsCount] #${cfsPageCounters[reaction.message.guild.id][rawName[0]]}\n`
+                globalTools.pageData.writeCounter(reaction.message.guild.id)
+                if (!(pageSettings.surfix.cfsIndexType === 'both')) break
             }
         }
 
-        postContent += pageSettings.surfix.note
-
+        postContent += `[note] ${pageSettings.surfix.note}`
 
         const embed = new MessageEmbed(message.embeds[0])
             .setDescription(`Approved: ${member}\n${Date()}`)
@@ -173,7 +184,8 @@ const exec = async (reaction, user) => {
         embedFields[tagFiledIndex].value += `,${addedTag.name}`
     }
     embed.fields = embedFields
-    message.edit(embed)
+    await message.edit(embed)
+    reaction.remove()
     return
 }
 
