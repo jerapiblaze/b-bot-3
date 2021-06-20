@@ -1,6 +1,7 @@
 global.commands = globalTools.index(`${__myModules}/slashCommands/commands`, '*')
-const { fetchMember, fetchMessage} = globalTools
+const { fetchMember, fetchMessage } = globalTools
 const { APIMessage } = require("discord.js")
+const childLogger = logger.child({ module: 'slash' })
 
 var client = null
 const setClient = async (input_client) => {
@@ -17,7 +18,7 @@ const CommandsAPIendpoint = (guildID) => {
 
 const deleteCommand = async (guildID, commandID) => {
     const app = client.api.applications(client.user.id)
-    if (guildID){
+    if (guildID) {
         app.guilds(guildID)
     }
 
@@ -26,7 +27,7 @@ const deleteCommand = async (guildID, commandID) => {
 const registerCommands = async (guildID) => {
     const commandsAPIendpoint = CommandsAPIendpoint(guildID)
     const registeredCommands = await commandsAPIendpoint.get()
-    
+
     // delete unknown commands from discord and add unregistered commands to queue
     var registerQueue = Object.keys(commands)
     for (let command of registeredCommands) {
@@ -39,7 +40,7 @@ const registerCommands = async (guildID) => {
             }
         }
     }
-    
+
     // register go go go
     for (let command of registerQueue) {
         await commandsAPIendpoint.post({
@@ -129,16 +130,21 @@ const exec = () => {
         interaction.originalMember = originalMember
         interaction.commandOptions = options_parse(interaction.data.options)
 
-        var commandOutput = null
-        if (command.exec.constructor.name === "AsyncFunction"){
-            commandOutput = await command.exec(interaction)
-        } else {
-            commandOutput = command.exec(interaction)
+        try {
+            var commandOutput = null
+            if (command.exec.constructor.name === "AsyncFunction") {
+                commandOutput = await command.exec(interaction)
+            } else {
+                commandOutput = command.exec(interaction)
+            }
+            if (!commandOutput) {
+                commandOutput = '= No output ='
+            }
+            interactionReply(interaction, commandOutput)
         }
-        if (!commandOutput){
-            commandOutput = '= No output ='
+        catch (e){
+            childLogger.error(e)
         }
-        interactionReply(interaction, commandOutput)
     })
 }
 
