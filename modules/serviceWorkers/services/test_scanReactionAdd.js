@@ -1,5 +1,5 @@
 const metadata = {
-    name: 'scanMessage',
+    name: 'scanReaction',
     description: 'log message text content to console',
     version: `1.0.0`,
     author: `jerapiblaze`

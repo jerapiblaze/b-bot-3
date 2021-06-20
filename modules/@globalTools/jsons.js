@@ -60,19 +60,63 @@ const writeCounter = (guild_id) => {
         writeJson(`${guild_id}_pageCounters.json`, cfsPageCounters[guild_id])
         return
     }
-    for (var g of Object.keys(cfsPageSettings)) {
+    for (var g of Object.keys(cfsPageCounters)) {
         writeJson(`${g}_pageCounters.json`, cfsPageCounters[g])
+    }
+}
+
+global.gameData = {}
+const updateGameData = (guild_id) => {
+    const name = guild_id ? `${guild_id}_games.json` : '_games.json'
+    const allSvGames = readJson(name)
+    for (var s of Object.keys(allSvGames)) {
+        global.gameData[s] = allSvGames[s]
+    }
+}
+
+const writeGameData = (guild_id) => {
+    if (guild_id) {
+        writeJson(`${guild_id}_games.json`, gameData[guild_id])
+        return
+    }
+    for (var g of Object.keys(gameData)) {
+        writeJson(`${g}_pageCounters.json`, gameData[g])
+    }
+}
+
+global.serverPinnedMsgs = {}
+const updatePinned = (guild_id) => {
+    const name = guild_id ? `${guild_id}_svpinnedmsgs.json` : '_svpinnedmsgs.json'
+    const allPinnedMsgs = readJson(name)
+    for (var s of Object.keys(allPinnedMsgs)) {
+        global.serverPinnedMsgs[s] = allPinnedMsgs[s]
+    }
+}
+
+const writePinned = (guild_id) => {
+    if (guild_id) {
+        writeJson(`${guild_id}_svpinnedmsgs.json`, serverPinnedMsgs[guild_id])
+        return
+    }
+    for (var g of Object.keys(serverPinnedMsgs)) {
+        writeJson(`${g}_svpinnedmsgs.json`, serverPinnedMsgs[g])
     }
 }
 
 updateSettings()
 updateCounters()
+updateGameData()
+updatePinned()
 
 const exec = {
     updateSettings,
     writeSettings,
     updateCounters,
-    writeCounter
+    writeCounter,
+    updateGameData,
+    writeGameData,
+    updatePinned,
+    writePinned
 }
 
 module.exports = {
