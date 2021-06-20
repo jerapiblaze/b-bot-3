@@ -41,8 +41,8 @@ const exp = async (message, t) => {
 const exec = async (message) => {
     if (!message.content.startsWith('/json')) return
     
-    if ((message.channel.type === 'text') && (!message.attachments)) {
-        console.log('ok')
+    if ((message.channel.type === 'text') && (!message.attachments.first())) {
+        
         const member = await fetchMember(message.client, message.guild.id, message.author.id)
         const allowedRole = member.hasPermission('ADMINISTRATOR')
         if (!allowedRole) return
@@ -69,7 +69,7 @@ const exec = async (message) => {
         exp(message, type)
     }
 
-    if ((!message.guild) && !(!message.attachments)){
+    if ((!message.guild) && !(!message.attachments.first())){
         const rawName = message.attachments.first().name.split('_')
 
         const guild_id = rawName[0]
