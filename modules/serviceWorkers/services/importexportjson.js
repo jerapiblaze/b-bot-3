@@ -40,8 +40,9 @@ const exp = async (message, t) => {
 }
 const exec = async (message) => {
     if (!message.content.startsWith('/json')) return
-
-    if ((message.channel.type = 'text') && (!message.attachments)) {
+    
+    if ((message.channel.type === 'text') && (!message.attachments)) {
+        console.log('ok')
         const member = await fetchMember(message.client, message.guild.id, message.author.id)
         const allowedRole = member.hasPermission('ADMINISTRATOR')
         if (!allowedRole) return
