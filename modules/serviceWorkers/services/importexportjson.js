@@ -40,7 +40,7 @@ const exp = async (message, t) => {
 }
 const exec = async (message) => {
     if (!message.content.startsWith('/json')) return
-    
+
     if ((message.channel.type === 'text') && (!message.attachments.first())) {
         const member = await fetchMember(message.client, message.guild.id, message.author.id)
         const allowedRole = member.hasPermission('ADMINISTRATOR')
@@ -68,18 +68,18 @@ const exec = async (message) => {
         exp(message, type)
     }
 
-    if ((!message.guild) && !(!message.attachments.first())){
+    if ((!message.guild) && !(!message.attachments.first())) {
         const rawName = message.attachments.first().name.split('_')
 
         const guild_id = rawName[0]
 
-        if (!isSnowflake(guild_id)){
+        if (!isSnowflake(guild_id)) {
             message.lineReplyNoMention('invalid guild id')
             return
         }
 
         const member = await fetchMember(message.client, guild_id, message.author.id)
-        if (!member){
+        if (!member) {
             message.lineReplyNoMention('404: guild not found')
             return
         }
@@ -90,7 +90,7 @@ const exec = async (message) => {
 
         try {
             const type = jsonFileNames.find(j => j === rawName[1].split('.')[0])
-            if (!type){
+            if (!type) {
                 throw 'invalid file name'
             }
             const ext = rawName[1].split('.')[1]
@@ -103,7 +103,7 @@ const exec = async (message) => {
             globalTools.pageData.updateCounters(guild_id)
 
             message.lineReplyNoMention('🔥 file imported')
-        } catch(e){
+        } catch (e) {
             message.lineReplyNoMention(`error: ${e.toString().match('^(.{1,100})')[0]} (...)`)
         }
     }
