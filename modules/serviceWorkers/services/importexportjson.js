@@ -104,7 +104,7 @@ const exec = async (message) => {
 
             message.lineReplyNoMention('🔥 file imported')
         } catch(e){
-            message.lineReplyNoMention(`error: ${e}`)
+            message.lineReplyNoMention(`error: ${e.toString().match('^(.{1,100})')[0]} (...)`)
         }
     }
 }

@@ -12,11 +12,7 @@ const readJson = (end) => {
     var output = {}
     for (var f of files) {
         var content = {}
-        try {
-            content = JSON.parse(fs.readFileSync(`${__dataDir}/${f}`))
-        } catch (e) {
-            content.error = e
-        }
+        content = JSON.parse(fs.readFileSync(`${__dataDir}/${f}`))
         const name = f.split('_')[0]
         output[name] = content
     }
