@@ -11,6 +11,7 @@ const zipFile = `${__rootDir}/data/.temp/bot_backup.zip`
 
 const { zip } = require('zip-a-folder')
 const { fetchChannel } = globalTools
+const { ms2human } = globalTools.timeTools
 
 const { Client, MessageAttachment } = require('discord.js')
 
@@ -20,8 +21,6 @@ client.login(process.env.DISCORD_BOT_TOKEN).catch(e => {
     childLogger.error(e)
 })
 
-const target = await fetchChannel(client, __botConfig.devmode.backup.to.channelID)
-
 const exec = async () => {
     childLogger.debug('Backing up...')
     try {
@@ -29,17 +28,23 @@ const exec = async () => {
         await zip(logsFolder, logsZipFile)
         await zip(backupFolder, zipFile)
 
+        const target = await fetchChannel(client, __botConfig.devmode.backup.to.channelID)
+
+        if (!target){
+            childLogger.error(`The configured channel is not found!`)
+        }
         const backupFile = new MessageAttachment(zipFile, `bot_backup.zip`)
 
         target.send(`✔ Backup completed: ${Date()}`, backupFile)
     } catch (e) {
         childLogger.error(e)
+        const target = await fetchChannel(client, __botConfig.devmode.backup.to.channelID)
         target.send(`⚠ Backup error: ${e.toString()}\n***(Check log files for more details)***`).catch(e => childLogger.error(`Cannot send messages to configed channel: ${e}`))
     }
     childLogger.debug(`Backup complete`)
 }
 
 client.on('ready', async () => {
-    childLogger.info(`Backup active. Interval: ${__botConfig.devmode.backup.interval}ms`)
+    childLogger.info(`Backup active. Interval: ${ms2human(__botConfig.devmode.backup.interval, {min: 2})}`)
     setInterval(exec, __botConfig.devmode.backup.interval)
 })

@@ -83,9 +83,12 @@ const exec = async (interaction) => {
                 .setDescription(game.description)
                 .setThumbnail(game.icon)
             var players = ``
-            for (let p of game.players) {
-                players += `<@${p}>`
+            if (typeof(game.players) === 'object'){
+                for (let p of game.players) {
+                    players += `<@${p}>`
+                }
             }
+            
             if (players.length > 0) {
                 embed.addField(`Players (${game.players.length})`, players)
             }
@@ -108,8 +111,10 @@ const exec = async (interaction) => {
                 .setAuthor(interaction.originalMember.user.tag, interaction.originalMember.user.avatarURL())
 
             var players = ``
-            for (let p of game.players) {
-                players += `<@${p}>`
+            if (typeof(game.players) === 'object'){
+                for (let p of game.players) {
+                    players += `<@${p}>`
+                }
             }
 
             interaction.originalMessage.channel.send(`It's time to playyyyyy **${game.name}**\n${players}`, embed)

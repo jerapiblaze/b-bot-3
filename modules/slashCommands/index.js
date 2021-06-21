@@ -1,3 +1,4 @@
+'use-strict'
 global.commands = globalTools.index(`${__myModules}/slashCommands/commands`, '*')
 const { fetchMember, fetchMessage } = globalTools
 const { APIMessage } = require("discord.js")

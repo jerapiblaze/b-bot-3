@@ -35,3 +35,15 @@ example: `123456789012345678_pageConters.json`
     "page_code":0
 }
 ```
+
+example: `123456789012345678_games.json`
+```json
+{
+    "game_code":{
+        "name":"game_name",
+        "description":"game_description",
+        "icon":"icon_url",
+        "players":[]
+    }
+}
+```
