@@ -34,7 +34,7 @@ const exec = async () => {
         target.send(`✔ Backup completed: ${Date()}`, backupFile)
     } catch (e) {
         childLogger.error(e)
-        target.send(`⚠ Backup error: ${e.toString()}\n***(Check log files for more details)***`)
+        target.send(`⚠ Backup error: ${e.toString()}\n***(Check log files for more details)***`).catch(e => childLogger.error(`Cannot send messages to configed channel: ${e}`))
     }
     childLogger.debug(`Backup complete`)
 }
