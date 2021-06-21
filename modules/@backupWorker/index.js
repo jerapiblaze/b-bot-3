@@ -20,6 +20,8 @@ client.login(process.env.DISCORD_BOT_TOKEN).catch(e => {
     childLogger.error(e)
 })
 
+const target = await fetchChannel(client, __botConfig.devmode.backup.to.channelID)
+
 const exec = async () => {
     childLogger.debug('Backing up...')
     try {
@@ -27,13 +29,12 @@ const exec = async () => {
         await zip(logsFolder, logsZipFile)
         await zip(backupFolder, zipFile)
 
-        const target = await fetchChannel(client, __botConfig.devmode.backup.to.channelID)
-
         const backupFile = new MessageAttachment(zipFile, `bot_backup.zip`)
 
-        target.send(`${Date()}`, backupFile)
+        target.send(`✔ Backup completed: ${Date()}`, backupFile)
     } catch (e) {
         childLogger.error(e)
+        target.send(`⚠ Backup error: ${e.toString()}\n***(Check log files for more details)***`)
     }
     childLogger.debug(`Backup complete`)
 }
