@@ -10,6 +10,13 @@
         "logging": {
             "useConsole": true,
             "level": "silly"
+        },
+        "backup":{
+            "enabled":true,
+            "to":{
+                "channelID":"856462446952972328"
+            },
+            "interval":43200000
         }
     },
     "presence": {

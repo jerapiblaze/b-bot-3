@@ -58,6 +58,11 @@ if (__botConfig.devmode.logging.useConsole) {
 const childLogger = logger.child({ module: 'main' })
 childLogger.info(`Hello. I am B-bot`)
 
+// initialize backup feature
+if (__botConfig.devmode.backup.enabled){
+    require(`${__myModules}/@backupWorker/index.js`)
+}
+
 // initialize discord client
 const Discord = require('discord.js')
 const { features } = require('process')
