@@ -105,6 +105,23 @@ const exec = async (message) => {
     // add reply
     commandArgs.splice(0, 1)
     const replyContent = commandArgs.join('/')
+
+    if (replyContent.length > 300) {
+        message.lineReplyNoMention(`Too long ! (200 characters or less)`)
+        return
+    }
+
+    var replyCount = 0
+    for (let e of embedFields){
+        if (e.name.startsWith('ReplyID: ')){
+            replyCount++
+        }
+    }
+    if (replyCount >= 5){
+        message.lineReplyNoMention(`Maximum number of replies (5) reached !!!`)
+        return
+    }
+
     const userAlias = pageSettings.modAliases[message.author.id] ? `${pageSettings.modAliases[message.author.id]} (admin/mod)` : `${message.author.tag} (member)`
     const replyField = { name: `ReplyID: ${message.id}`, value: `>>> ${userAlias}\n${replyContent}` }
 
