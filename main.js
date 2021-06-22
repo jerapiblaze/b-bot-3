@@ -58,16 +58,44 @@ if (__botConfig.devmode.logging.useConsole) {
 const childLogger = logger.child({ module: 'main' })
 childLogger.info(`Hello. I am B-bot`)
 
-// initialize backup feature
-if (__botConfig.devmode.backup.enabled){
-    require(`${__myModules}/@backupWorker/index.js`)
-}
-
 // initialize discord client
 const Discord = require('discord.js')
 const { features } = require('process')
 require('discord-reply');
 const client = new Discord.Client({ partials: ['MESSAGE', 'CHANNEL', 'REACTION', 'USER', 'GUILD_MEMBER'] })
+
+// initialize backup feature
+if (__botConfig.devmode.backup.enabled){
+    const Backuper = require('./modules/@backupWorker/index')
+    
+    const backupLogger = logger.child({module: 'backup'})
+    backupLogger.info(`Auto-backup enabled (interval: ${globalTools.timeTools.ms2human(__botConfig.devmode.backup.interval, {min:3})})`)
+
+    const backupWorker = new Backuper({
+        discordToken: __botConfig.devmode.backup.useSeperatedClient ? process.env.DISCORD_BACKUPBOT_TOKEN : process.env.DISCORD_BOT_TOKEN,
+        workDir: './data/@backup',
+        backupDir: './data',
+        exclude: ['temp', '@backup', '@assets'],
+        discordChannelID: __botConfig.devmode.backup.to.channelID,
+        keepClientAlive: __botConfig.devmode.backup.keepBackupClientAlive,
+        name: `bbot_backup`,
+        comment: `b-bot data backup file`
+    })
+
+    backupWorker.on(`warn`, (e) => {
+        backupLogger.warn(`backup: ${e}`)
+    })
+
+    const backupTask = async () => {
+        backupLogger.debug(`Backup: backup in progress`)
+        await backupWorker.backupNow().catch(e => {
+            backupLogger.error(e)
+        })
+        backupLogger.debug(`Backup: backup completed`)
+    }
+
+    setInterval(backupTask, __botConfig.devmode.backup.interval)
+}
 
 // log errors
 client.on('rateLimit', (info) => {
