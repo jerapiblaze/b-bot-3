@@ -75,7 +75,7 @@ if (__botConfig.devmode.backup.enabled){
         discordToken: __botConfig.devmode.backup.useSeperatedClient ? process.env.DISCORD_BACKUPBOT_TOKEN : process.env.DISCORD_BOT_TOKEN,
         workDir: './data/@backup',
         backupDir: './data',
-        exclude: ['temp', '@backup', '@assets'],
+        exclude: ['.temp', '@backup', '@assets'],
         discordChannelID: __botConfig.devmode.backup.to.channelID,
         keepClientAlive: __botConfig.devmode.backup.keepBackupClientAlive,
         name: `bbot_backup`,
@@ -83,15 +83,23 @@ if (__botConfig.devmode.backup.enabled){
     })
 
     backupWorker.on(`warn`, (e) => {
-        backupLogger.warn(`backup: ${e}`)
+        backupLogger.warn(e)
     })
 
-    const backupTask = async () => {
-        backupLogger.debug(`Backup: backup in progress`)
+    global.backupTask = async () => {
+        backupLogger.debug(backup in progress)
         await backupWorker.backupNow().catch(e => {
             backupLogger.error(e)
         })
-        backupLogger.debug(`Backup: backup completed`)
+        backupLogger.debug(`backup completed`)
+    }
+
+    global.restoreTask = async (msgid) => {
+        backupLogger.debug(`restore in progress`)
+        await backupWorker.restoreNow(msgid).catch(e => {
+            backupLogger.error(e)
+        })
+        backupLogger.debug(`restore completed`)
     }
 
     setInterval(backupTask, __botConfig.devmode.backup.interval)
