@@ -23,6 +23,14 @@ global.random = (min, max) => {
 }
 global.globalTools = require(`${__myModules}/@globalTools/index.js`).exec()
 
+Object.freeze(global.__rootDir)
+Object.freeze(global.__tempDir)
+Object.freeze(global.__myModules)
+Object.freeze(global.__dataDir)
+Object.freeze(global.__assetsDir)
+Object.freeze(global.__botConfig)
+Object.freeze(global.__URLs)
+
 // initialize environment variables
 if (__botConfig.devmode.useDotEnv){
     require('dotenv').config()
@@ -101,6 +109,9 @@ if (__botConfig.devmode.backup.enabled){
         })
         backupLogger.debug(`restore completed`)
     }
+
+    Object.freeze(global.backupTask)
+    Object.freeze(global.restoreTask)
 
     setInterval(backupTask, __botConfig.devmode.backup.interval)
 }

@@ -105,6 +105,7 @@ var Backup2Discord = /** @class */ (function (_super) {
     __extends(Backup2Discord, _super);
     function Backup2Discord(options) {
         var _this = _super.call(this) || this;
+        _this._client = null;
         _this._workDir = null;
         _this._backupDir = null;
         _this._exclude = null;
@@ -127,11 +128,6 @@ var Backup2Discord = /** @class */ (function (_super) {
         if (!options.discordChannelID)
             throw new Error("No discord channel id provided");
         var discordToken = options.discordToken, workDir = options.workDir, backupDir = options.backupDir, exclude = options.exclude, discordChannelID = options.discordChannelID, keepClientAlive = options.keepClientAlive, comment = options.comment, name = options.name, unSecure = options.unSecure;
-        _this._client = new discord_js_1.Client({ partials: ['CHANNEL'] });
-        _this._token = discordToken;
-        if ((!_this._client.options.partials) || (!_this._client.options.partials.includes('CHANNEL'))) {
-            _this.emit('warn', "it's recommended to enable CHANNEL partial");
-        }
         _this._workDir = workDir;
         _this._backupDir = backupDir;
         _this._exclude = exclude ? exclude : [];
@@ -140,6 +136,7 @@ var Backup2Discord = /** @class */ (function (_super) {
         _this._comment = comment;
         _this._name = name ? name : 'all';
         _this._unSecure = unSecure;
+        _this._token = discordToken;
         if (module && require.main) {
             var path_1 = require.main.path;
             if (path_1) {
@@ -155,7 +152,8 @@ var Backup2Discord = /** @class */ (function (_super) {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        if (!!this._client.readyTimestamp) return [3 /*break*/, 2];
+                        if (!!this._client) return [3 /*break*/, 2];
+                        this._client = new discord_js_1.Client({ partials: ['CHANNEL'] });
                         return [4 /*yield*/, this._client.login(this._token)];
                     case 1:
                         _a.sent();
@@ -364,6 +362,7 @@ var Backup2Discord = /** @class */ (function (_super) {
     Backup2Discord.prototype.finalize = function () {
         if (!this._keepClientAlive) {
             this._client.destroy();
+            this._client = null;
         }
     };
     return Backup2Discord;

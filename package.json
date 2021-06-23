@@ -23,6 +23,7 @@
     "fast-average-color-node": "^1.0.3",
     "fb": "^2.0.0",
     "is-image": "^3.0.0",
+    "md5-file": "^5.0.0",
     "normalize-url": "^6.0.0",
     "password-strength-calc": "^1.0.3",
     "ping": "^0.4.1",
