@@ -61,6 +61,7 @@ var zip = require('zip-a-folder').zip;
 var extract = require('extract-zip');
 var bent = require('bent');
 var RemoteFileBuffer = bent('buffer');
+var md5File = require('md5-file');
 var sleep = function (milliseconds) {
     var date = Date.now();
     var currentDate = null;
@@ -114,6 +115,7 @@ var Backup2Discord = /** @class */ (function (_super) {
         _this._keepClientAlive = true;
         _this._comment = null;
         _this._name = null;
+        _this._unSecure = true;
         if (!options)
             throw new Error("Bad config");
         if (!options.discordToken)
@@ -124,7 +126,7 @@ var Backup2Discord = /** @class */ (function (_super) {
             throw new Error("No backup directory provided");
         if (!options.discordChannelID)
             throw new Error("No discord channel id provided");
-        var discordToken = options.discordToken, workDir = options.workDir, backupDir = options.backupDir, exclude = options.exclude, discordChannelID = options.discordChannelID, keepClientAlive = options.keepClientAlive, comment = options.comment, name = options.name;
+        var discordToken = options.discordToken, workDir = options.workDir, backupDir = options.backupDir, exclude = options.exclude, discordChannelID = options.discordChannelID, keepClientAlive = options.keepClientAlive, comment = options.comment, name = options.name, unSecure = options.unSecure;
         _this._client = new discord_js_1.Client({ partials: ['CHANNEL'] });
         _this._token = discordToken;
         if ((!_this._client.options.partials) || (!_this._client.options.partials.includes('CHANNEL'))) {
@@ -137,12 +139,13 @@ var Backup2Discord = /** @class */ (function (_super) {
         _this._keepClientAlive = keepClientAlive;
         _this._comment = comment;
         _this._name = name ? name : 'all';
+        _this._unSecure = unSecure;
         if (module && require.main) {
-            var path = require.main.path;
-            if (path) {
-                _this._basePath = path;
-                _this._workDir = path + "/" + _this._workDir;
-                _this._backupDir = path + "/" + _this._backupDir;
+            var path_1 = require.main.path;
+            if (path_1) {
+                _this._basePath = path_1;
+                _this._workDir = path_1 + "/" + _this._workDir;
+                _this._backupDir = path_1 + "/" + _this._backupDir;
             }
         }
         return _this;
@@ -166,7 +169,7 @@ var Backup2Discord = /** @class */ (function (_super) {
     };
     Backup2Discord.prototype.makeBackupFile = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var subItem, tempDir, _i, subItem_1, s;
+            var subItem, tempDir, _i, subItem_1, s, hash, output;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -195,8 +198,15 @@ var Backup2Discord = /** @class */ (function (_super) {
                             recursive: true,
                             force: true
                         });
-                        this.emit("backupfileCreate", this._workDir + "/" + this._name + ".zip");
-                        return [2 /*return*/, this._workDir + "/" + this._name + ".zip"];
+                        return [4 /*yield*/, md5File(this._workDir + "/" + this._name + ".zip")];
+                    case 6:
+                        hash = _a.sent();
+                        output = {
+                            path: this._workDir + "/" + this._name + ".zip",
+                            md5: hash
+                        };
+                        this.emit("backupfileCreated", output);
+                        return [2 /*return*/, output];
                 }
             });
         });
@@ -218,8 +228,8 @@ var Backup2Discord = /** @class */ (function (_super) {
                         return [4 /*yield*/, this.makeBackupFile()];
                     case 3:
                         backupFile = _a.sent();
-                        file = new discord_js_1.MessageAttachment(backupFile);
-                        return [4 /*yield*/, target.send("\u2705 Backup completed\n**Name:** " + this._name + "\n**Time:** " + Date() + "\n**Comment:** " + this._comment, file)];
+                        file = new discord_js_1.MessageAttachment(backupFile.path);
+                        return [4 /*yield*/, target.send("\u2705 Backup completed\n**Name:** " + this._name + "\n**Time:** " + Date() + "\n**Comment:** " + this._comment + "\n**MD5-checksum:** " + backupFile.md5, file)];
                     case 4:
                         msg = _a.sent();
                         this.emit("backupfileUploaded", msg.attachments.first().url);
@@ -229,36 +239,46 @@ var Backup2Discord = /** @class */ (function (_super) {
             });
         });
     };
-    Backup2Discord.prototype.extractBackupFile = function (filePath) {
+    Backup2Discord.prototype.extractBackupFile = function (filePath, md5) {
         return __awaiter(this, void 0, void 0, function () {
-            var tempDir, subFile, _i, subFile_1, s, dirname;
+            var hash, tempDir, subFile, _i, subFile_1, s, dirname;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0:
+                    case 0: return [4 /*yield*/, md5File(filePath)];
+                    case 1:
+                        hash = _a.sent();
+                        if (!(md5 === hash)) {
+                            if (this._unSecure) {
+                                this.emit("warn", "filehash check failed");
+                            }
+                            else {
+                                throw new Error("file checksum failed");
+                            }
+                        }
                         tempDir = fs.mkdtempSync(this._workDir + "/backup_temp_");
                         return [4 /*yield*/, extract(filePath, { dir: tempDir })];
-                    case 1:
+                    case 2:
                         _a.sent();
                         fs.rmSync(filePath, {
                             force: true
                         });
                         subFile = fs.readdirSync(tempDir).filter(function (s) { return s.endsWith('.zip'); });
                         _i = 0, subFile_1 = subFile;
-                        _a.label = 2;
-                    case 2:
-                        if (!(_i < subFile_1.length)) return [3 /*break*/, 5];
+                        _a.label = 3;
+                    case 3:
+                        if (!(_i < subFile_1.length)) return [3 /*break*/, 6];
                         s = subFile_1[_i];
                         dirname = s.split('.');
                         dirname.pop();
                         dirname = dirname.join('.');
                         return [4 /*yield*/, extract(tempDir + "/" + s, { dir: this._backupDir + "/" + dirname })];
-                    case 3:
-                        _a.sent();
-                        _a.label = 4;
                     case 4:
-                        _i++;
-                        return [3 /*break*/, 2];
+                        _a.sent();
+                        _a.label = 5;
                     case 5:
+                        _i++;
+                        return [3 /*break*/, 3];
+                    case 6:
                         fs.rmSync("" + tempDir, {
                             recursive: true,
                             force: true
@@ -271,7 +291,7 @@ var Backup2Discord = /** @class */ (function (_super) {
     };
     Backup2Discord.prototype.restoreNow = function (msgID) {
         return __awaiter(this, void 0, void 0, function () {
-            var target, msgs, msg, message, cloudFile, remoteFileBuffer;
+            var target, msgs, msg, message, cloudFile, parsedMsgConent, md5Row, md5, remoteFileBuffer;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.initialize()];
@@ -292,18 +312,47 @@ var Backup2Discord = /** @class */ (function (_super) {
                     case 4: return [4 /*yield*/, fetchMessage(this._client, this._discordChannelID, msgID)];
                     case 5:
                         message = _a.sent();
+                        if (!(message.author.id === this._client.user.id)) {
+                            if (this._unSecure) {
+                                this.emit("warn", "message author and client is mismatch");
+                            }
+                            else {
+                                throw new Error("message author (" + message.author.id + ") and client (" + this._client.user.id + ") is mismatch");
+                            }
+                        }
                         cloudFile = message.attachments.first();
                         if (!cloudFile)
                             throw new Error("The selected message does not contain any file");
                         if (!(cloudFile.name === this._name + ".zip")) {
                             this.emit("warn", "The backuped filename (" + cloudFile.name + ") and the configured filename (" + this._name + ".zip) does not match");
                         }
+                        parsedMsgConent = message.content.split('\n');
+                        md5Row = parsedMsgConent.find(function (r) { return r.startsWith('**MD5-checksum:**'); });
+                        if (!md5Row) {
+                            if (this._unSecure) {
+                                this.emit("warn", "no md5-checksum found");
+                            }
+                            else {
+                                throw new Error("md5-checksum not found");
+                            }
+                        }
+                        else {
+                            md5 = md5Row.split(' ').pop();
+                        }
+                        if (!md5) {
+                            if (this._unSecure) {
+                                this.emit("warn", "failed to find md5");
+                            }
+                            else {
+                                throw new Error("failed to find md5");
+                            }
+                        }
                         return [4 /*yield*/, RemoteFileBuffer(cloudFile.url)];
                     case 6:
                         remoteFileBuffer = _a.sent();
                         fs.writeFileSync(this._workDir + "/" + cloudFile.name + ".zip", remoteFileBuffer);
                         this.emit("backupfileDownloaded", this._workDir + "/" + cloudFile.name + ".zip");
-                        return [4 /*yield*/, this.extractBackupFile(this._workDir + "/" + cloudFile.name + ".zip")];
+                        return [4 /*yield*/, this.extractBackupFile(this._workDir + "/" + cloudFile.name + ".zip", md5)];
                     case 7:
                         _a.sent();
                         this.finalize();

@@ -87,7 +87,7 @@ if (__botConfig.devmode.backup.enabled){
     })
 
     global.backupTask = async () => {
-        backupLogger.debug(backup in progress)
+        backupLogger.debug(`backup in progress`)
         await backupWorker.backupNow().catch(e => {
             backupLogger.error(e)
         })
