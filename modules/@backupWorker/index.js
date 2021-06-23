@@ -359,8 +359,8 @@ var Backup2Discord = /** @class */ (function (_super) {
             });
         });
     };
-    Backup2Discord.prototype.finalize = function () {
-        if (!this._keepClientAlive) {
+    Backup2Discord.prototype.finalize = function (force) {
+        if ((!this._keepClientAlive) || force) {
             this._client.destroy();
             this._client = null;
         }
