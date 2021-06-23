@@ -58,6 +58,9 @@ var events_1 = require("events");
 // const { EventEmitter } = require('events')
 var fs = require('fs');
 var zip = require('zip-a-folder').zip;
+var extract = require('extract-zip');
+var bent = require('bent');
+var RemoteFileBuffer = bent('buffer');
 var sleep = function (milliseconds) {
     var date = Date.now();
     var currentDate = null;
@@ -77,6 +80,23 @@ var fetchChannel = function (client, channel_id) { return __awaiter(void 0, void
                 channel = _a.sent();
                 _a.label = 2;
             case 2: return [2 /*return*/, channel];
+        }
+    });
+}); };
+var fetchMessage = function (client, channel_id, message_id) { return __awaiter(void 0, void 0, void 0, function () {
+    var channel, message;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, fetchChannel(client, channel_id)];
+            case 1:
+                channel = _a.sent();
+                message = channel.messages.cache.get(message_id);
+                if (!((!message) || (message.partial))) return [3 /*break*/, 3];
+                return [4 /*yield*/, channel.messages.fetch(message_id)];
+            case 2:
+                message = _a.sent();
+                _a.label = 3;
+            case 3: return [2 /*return*/, message];
         }
     });
 }); };
@@ -131,9 +151,14 @@ var Backup2Discord = /** @class */ (function (_super) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this._client.login(this._token)];
+                    case 0:
+                        if (!!this._client.readyTimestamp) return [3 /*break*/, 2];
+                        return [4 /*yield*/, this._client.login(this._token)];
                     case 1:
                         _a.sent();
+                        _a.label = 2;
+                    case 2:
+                        this.emit("clientReady");
                         return [2 /*return*/];
                 }
             });
@@ -141,16 +166,16 @@ var Backup2Discord = /** @class */ (function (_super) {
     };
     Backup2Discord.prototype.makeBackupFile = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var subItem, tempDir, _i, subItem_1, s, _a, subItem_2, s;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
+            var subItem, tempDir, _i, subItem_1, s;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
                     case 0:
                         subItem = fs.readdirSync(this._backupDir, { withFileTypes: true })
                             .filter(function (dirent) { return dirent.isDirectory(); })
                             .map(function (dirent) { return dirent.name; });
                         tempDir = fs.mkdtempSync(this._workDir + "/backup_temp_");
                         _i = 0, subItem_1 = subItem;
-                        _b.label = 1;
+                        _a.label = 1;
                     case 1:
                         if (!(_i < subItem_1.length)) return [3 /*break*/, 4];
                         s = subItem_1[_i];
@@ -158,21 +183,19 @@ var Backup2Discord = /** @class */ (function (_super) {
                             return [3 /*break*/, 3];
                         return [4 /*yield*/, zip(this._backupDir + "/" + s, tempDir + "/" + s + ".zip", 9)];
                     case 2:
-                        _b.sent();
-                        _b.label = 3;
+                        _a.sent();
+                        _a.label = 3;
                     case 3:
                         _i++;
                         return [3 /*break*/, 1];
                     case 4: return [4 /*yield*/, zip(tempDir, this._workDir + "/" + this._name + ".zip", 9)];
                     case 5:
-                        _b.sent();
-                        for (_a = 0, subItem_2 = subItem; _a < subItem_2.length; _a++) {
-                            s = subItem_2[_a];
-                            if (this._exclude.includes(s))
-                                continue;
-                            fs.rmSync(tempDir + "/" + s + ".zip");
-                        }
-                        fs.rmdirSync(tempDir);
+                        _a.sent();
+                        fs.rmSync(tempDir, {
+                            recursive: true,
+                            force: true
+                        });
+                        this.emit("backupfileCreate", this._workDir + "/" + this._name + ".zip");
                         return [2 /*return*/, this._workDir + "/" + this._name + ".zip"];
                 }
             });
@@ -199,13 +222,100 @@ var Backup2Discord = /** @class */ (function (_super) {
                         return [4 /*yield*/, target.send("\u2705 Backup completed\n**Name:** " + this._name + "\n**Time:** " + Date() + "\n**Comment:** " + this._comment, file)];
                     case 4:
                         msg = _a.sent();
-                        if (!this._keepClientAlive) {
-                            this._client.destroy();
-                        }
+                        this.emit("backupfileUploaded", msg.attachments.first().url);
+                        this.finalize();
                         return [2 /*return*/, msg];
                 }
             });
         });
+    };
+    Backup2Discord.prototype.extractBackupFile = function (filePath) {
+        return __awaiter(this, void 0, void 0, function () {
+            var tempDir, subFile, _i, subFile_1, s, dirname;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        tempDir = fs.mkdtempSync(this._workDir + "/backup_temp_");
+                        return [4 /*yield*/, extract(filePath, { dir: tempDir })];
+                    case 1:
+                        _a.sent();
+                        fs.rmSync(filePath, {
+                            force: true
+                        });
+                        subFile = fs.readdirSync(tempDir).filter(function (s) { return s.endsWith('.zip'); });
+                        _i = 0, subFile_1 = subFile;
+                        _a.label = 2;
+                    case 2:
+                        if (!(_i < subFile_1.length)) return [3 /*break*/, 5];
+                        s = subFile_1[_i];
+                        dirname = s.split('.');
+                        dirname.pop();
+                        dirname = dirname.join('.');
+                        return [4 /*yield*/, extract(tempDir + "/" + s, { dir: this._backupDir + "/" + dirname })];
+                    case 3:
+                        _a.sent();
+                        _a.label = 4;
+                    case 4:
+                        _i++;
+                        return [3 /*break*/, 2];
+                    case 5:
+                        fs.rmSync("" + tempDir, {
+                            recursive: true,
+                            force: true
+                        });
+                        this.emit("backupfileExtracted", this._backupDir);
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    Backup2Discord.prototype.restoreNow = function (msgID) {
+        return __awaiter(this, void 0, void 0, function () {
+            var target, msgs, msg, message, cloudFile, remoteFileBuffer;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.initialize()];
+                    case 1:
+                        _a.sent();
+                        if (!!msgID) return [3 /*break*/, 4];
+                        return [4 /*yield*/, fetchChannel(this._client, this._discordChannelID)];
+                    case 2:
+                        target = _a.sent();
+                        return [4 /*yield*/, target.messages.fetch({ limit: 1 })];
+                    case 3:
+                        msgs = _a.sent();
+                        if (!msgs)
+                            throw new Error('Cannot find backup file in selected channel. Please provide a message id.');
+                        msg = msgs.first();
+                        msgID = msg.id;
+                        _a.label = 4;
+                    case 4: return [4 /*yield*/, fetchMessage(this._client, this._discordChannelID, msgID)];
+                    case 5:
+                        message = _a.sent();
+                        cloudFile = message.attachments.first();
+                        if (!cloudFile)
+                            throw new Error("The selected message does not contain any file");
+                        if (!(cloudFile.name === this._name + ".zip")) {
+                            this.emit("warn", "The backuped filename (" + cloudFile.name + ") and the configured filename (" + this._name + ".zip) does not match");
+                        }
+                        return [4 /*yield*/, RemoteFileBuffer(cloudFile.url)];
+                    case 6:
+                        remoteFileBuffer = _a.sent();
+                        fs.writeFileSync(this._workDir + "/" + cloudFile.name + ".zip", remoteFileBuffer);
+                        this.emit("backupfileDownloaded", this._workDir + "/" + cloudFile.name + ".zip");
+                        return [4 /*yield*/, this.extractBackupFile(this._workDir + "/" + cloudFile.name + ".zip")];
+                    case 7:
+                        _a.sent();
+                        this.finalize();
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    Backup2Discord.prototype.finalize = function () {
+        if (!this._keepClientAlive) {
+            this._client.destroy();
+        }
     };
     return Backup2Discord;
 }(events_1.EventEmitter));

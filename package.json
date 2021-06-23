@@ -19,6 +19,7 @@
     "discord.js": "^12.5.3",
     "dotenv": "^10.0.0",
     "encrypt-with-password": "^1.0.0",
+    "extract-zip": "^2.0.1",
     "fast-average-color-node": "^1.0.3",
     "fb": "^2.0.0",
     "is-image": "^3.0.0",
