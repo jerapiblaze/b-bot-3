@@ -110,8 +110,25 @@ if (__botConfig.devmode.backup.enabled){
         backupLogger.debug(`restore completed`)
     }
 
+    global.disableRestore = (on) => {
+        backupLogger.warn(`${on ? 'disable' : 'enable'} restore`)
+        backupWorker.restoreDisabled = on
+    }
+
+    global.disableBackup = (on) => {
+        backupLogger.warn(`${on ? 'disable' : 'enable'} backup`)
+        backupWorker.backupDisabled = on
+    }
+
+    global.destroyBackup = () => {
+        backupLogger.warn(`destroying backup instance`)
+        backupWorker.destroy()
+    }
+
     Object.freeze(global.backupTask)
     Object.freeze(global.restoreTask)
+    Object.freeze(global.disableRestore)
+    Object.freeze(global.disableBackup)
 
     setInterval(backupTask, __botConfig.devmode.backup.interval)
 }
@@ -143,6 +160,7 @@ const exitProtocol = async (event, err) => {
     childLogger.info(`I'm gonna sleep now.\t${event}\t\terror:${err}`)
     childLogger.silly(`Destroying client`)
     client.destroy()
+    destroyBackup()
     childLogger.debug('Client terminated')
     childLogger.debug('terminate signal sent')
     process.exit(err ? 1 : 0)

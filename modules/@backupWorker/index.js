@@ -111,12 +111,13 @@ var Backup2Discord = /** @class */ (function (_super) {
         _this._exclude = null;
         _this._discordChannelID = null;
         _this._basePath = null;
-        _this._clientReady = false;
         _this._token = null;
         _this._keepClientAlive = true;
         _this._comment = null;
         _this._name = null;
         _this._unSecure = true;
+        _this.backupDisabled = false;
+        _this.restoreDisabled = false;
         if (!options)
             throw new Error("Bad config");
         if (!options.discordToken)
@@ -214,7 +215,12 @@ var Backup2Discord = /** @class */ (function (_super) {
             var target, backupFile, file, msg;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.initialize()];
+                    case 0:
+                        if (this.backupDisabled) {
+                            this.emit("warn", "backup disabled");
+                            return [2 /*return*/, null];
+                        }
+                        return [4 /*yield*/, this.initialize()];
                     case 1:
                         _a.sent();
                         return [4 /*yield*/, fetchChannel(this._client, this._discordChannelID)];
@@ -292,7 +298,12 @@ var Backup2Discord = /** @class */ (function (_super) {
             var target, msgs, msg, message, cloudFile, parsedMsgConent, md5Row, md5, remoteFileBuffer;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.initialize()];
+                    case 0:
+                        if (this.restoreDisabled) {
+                            this.emit("warn", "restore disabled");
+                            return [2 /*return*/, null];
+                        }
+                        return [4 /*yield*/, this.initialize()];
                     case 1:
                         _a.sent();
                         if (!!msgID) return [3 /*break*/, 4];
@@ -360,10 +371,34 @@ var Backup2Discord = /** @class */ (function (_super) {
         });
     };
     Backup2Discord.prototype.finalize = function (force) {
-        if ((!this._keepClientAlive) || force) {
+        if (((!this._keepClientAlive) || force) && !(!this._client)) {
             this._client.destroy();
             this._client = null;
         }
+    };
+    Backup2Discord.prototype.destroy = function () {
+        this.finalize(true);
+        this._token = null;
+    };
+    Backup2Discord.prototype.setToken = function (token) {
+        this._token = token;
+        return this;
+    };
+    Backup2Discord.prototype.setworkDir = function (dir) {
+        this._workDir = dir;
+        return this;
+    };
+    Backup2Discord.prototype.setExclude = function (dir) {
+        this._exclude = dir;
+        return this;
+    };
+    Backup2Discord.prototype.setChannelID = function (id) {
+        this._discordChannelID = id;
+        return this;
+    };
+    Backup2Discord.prototype.setComment = function (cmt) {
+        this._comment = cmt;
+        return this;
     };
     return Backup2Discord;
 }(events_1.EventEmitter));
