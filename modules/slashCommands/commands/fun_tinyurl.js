@@ -36,6 +36,7 @@ const config = {
 const tinyurl = require('tinyurl')
 
 const exec = async (interaction) => {
+    const options = interaction.commandOptions
     var output = null
     var err = null
     if (options.alias){

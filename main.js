@@ -87,7 +87,8 @@ if (__botConfig.devmode.backup.enabled){
         discordChannelID: __botConfig.devmode.backup.to.channelID,
         keepClientAlive: __botConfig.devmode.backup.keepBackupClientAlive,
         name: `bbot_backup`,
-        comment: `b-bot data backup file`
+        comment: `b-bot data backup file`,
+        unSecure: __botConfig.devmode.backup.useSeperatedClient
     })
 
     backupWorker.on(`warn`, (e) => {
@@ -141,12 +142,10 @@ client.on('rateLimit', (info) => {
 client.on('disconnect', () => {
     childLogger.error('Disconnected');
 })
-client.on('shardError', (info) => {
-    const { error, id } = info
-    childLogger.error(`_shard_${id}: ${error}`);
+client.on('shardError', (error, shardID) => {
+    childLogger.error(`_shard_${shardID}: ${error}`);
 })
-client.on('shardDisconnect', (info) => {
-    const { CloseEvent, id } = info
+client.on('shardDisconnect', (CloseEvent, id) => {
     childLogger.error(`_shard_${id} disconnected: ${CloseEvent}`)
 })
 client.on('error', (error) => {

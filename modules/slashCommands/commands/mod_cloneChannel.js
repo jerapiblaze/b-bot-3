@@ -41,6 +41,8 @@ const config = {
 
 const exec = async (interaction) => {
     const options = interaction.commandOptions
+    const client = interaction.client
+
     let targetChannel = interaction.originalMessage.channel
     var name = options.newname
     var nsfw = options.nsfw

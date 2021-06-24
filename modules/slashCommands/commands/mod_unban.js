@@ -36,6 +36,7 @@ const config = {
 const { MessageEmbed } = require("discord.js")
 
 const exec = async (interaction) => {
+    const options = interaction.commandOptions
     let guild = interaction.originalMessage.guild
 
     var reason = `Time to unban`
@@ -53,7 +54,7 @@ const exec = async (interaction) => {
                 Reason: **${reason}**
             `)
             .setFooter(`Now you can join again with an invite link.`)
-            .setColor('0x09ff00')).catch(e => console.log(e))
+            .setColor('0x09ff00')).catch(e => null)
     }).catch(e => {
         err = e
     })
