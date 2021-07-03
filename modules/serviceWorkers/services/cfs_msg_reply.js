@@ -13,6 +13,7 @@ const config = {
 
 const { fetchMember, fetchMessage } = globalTools
 
+const ignoreCheck = require('../tools/cfs_autoignore.js').exec
 const isSnowflake = (n) => {
     if (isNaN(n)) {
         return false
@@ -105,6 +106,18 @@ const exec = async (message) => {
     // add reply
     commandArgs.splice(0, 1)
     const replyContent = commandArgs.join('/')
+
+    // check content
+    const ignoreDiclist = Array.prototype.concat(pageSettings.ignoreDics, `${message.guild.id}_${rawName[0]}`)
+    const checkResult = ignoreCheck(message, ignoreDiclist)
+    if (checkResult.verify) {
+        message.react('⚠')
+        message.lineReplyNoMention(`\`\`\`diff\n- ==== Blocked content ==== -\n[Blocked term] ${checkResult.word}\n\`\`\``).then(m => {
+            m.delete({timeout: 5000})
+        })
+        message.delete({timeout: 3000})
+        return
+    }
 
     if (replyContent.length > 300) {
         message.lineReplyNoMention(`Too long ! (200 characters or less)`)

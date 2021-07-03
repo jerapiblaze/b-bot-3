@@ -31,10 +31,11 @@ const exec = async (message) => {
     })
     if (!target) return
 
-    const ignoreDiclist = Array.prototype.concat(`global_${pageSettings[rawName[0]].globalIgnoreDics}`, `${message.guild.id}_${rawName[0]}`)
-
-    if (ignoreCheck(message, ignoreDiclist) && (!message.forceAllowCfs)) {
+    const ignoreDiclist = Array.prototype.concat(pageSettings[rawName[0]].ignoreDics, `${message.guild.id}_${rawName[0]}`)
+    const checkResult = ignoreCheck(message, ignoreDiclist)
+    if (checkResult.verify && (!message.forceAllowCfs)) {
         message.react('⚠')
+        target.send(`\`\`\`diff\n- ==== Blocked cfs ==== -\n[Blocked term] ${checkResult.word}\n[Original link] ${message.url}\n\`\`\``)
         return
     }
 

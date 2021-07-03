@@ -6,8 +6,14 @@ const metadata = {
 }
 
 const exec = (message, dicsList) => {
-    if (!ignoreDictionary) return false
-    if (!dicsList) return false
+    if (!ignoreDictionary) return {
+        verify: false,
+        word: null
+    }
+    if (!dicsList) return {
+        verify: false,
+        word: null
+    }
 
     var dictionary = []
     
@@ -25,9 +31,15 @@ const exec = (message, dicsList) => {
     for (let w of dictionary) {
         const word = w.toString().toLowerCase().trim()
         if (parsedContent.search(new RegExp(`(\\W(${word})\\W)|(_${word}_)`, 'g', 'm', 'u')) === -1) continue
-        return true
+        return {
+            verify: true,
+            word: word
+        }
     }
-    return false
+    return {
+        verify: false,
+        word: null
+    }
 }
 
 module.exports = {
