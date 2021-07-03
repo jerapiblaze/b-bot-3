@@ -26,7 +26,7 @@ const fs = require('fs')
 const bent = require('bent')
 const getJSON = bent('json')
 
-const jsonFileNames = ['pageSettings', 'pageCounters', 'games']
+const jsonFileNames = ['pageSettings', 'pageCounters', 'games', 'ignoreDic']
 
 const exp = async (message, t) => {
     const file = new MessageAttachment(`${__dataDir}/${message.guild.id}_${t}.json`)
