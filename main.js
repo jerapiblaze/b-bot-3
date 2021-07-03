@@ -157,6 +157,9 @@ client.on('warn', (info) => {
 
 const exitProtocol = async (event, err) => {
     childLogger.info(`I'm gonna sleep now.\t${event}\t\terror:${err}`)
+    if (!(!err)){
+        childLogger.error(err)
+    }
     childLogger.silly(`Destroying client`)
     client.destroy()
     destroyBackup()
