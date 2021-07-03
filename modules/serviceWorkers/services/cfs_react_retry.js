@@ -12,7 +12,7 @@ const config = {
 const {fetchMessage, fetchMember} = globalTools
 const exec = async (reaction, user) => {
     if ((reaction.message.channel.type === 'dm') || (!reaction.message.guild)) return
-    if (!(reaction.emoji.name.toString() === '🔁')) return
+    if ((!(reaction.emoji.name.toString() === '🔁')) && (!(reaction.emoji.name.toString() === '🔂'))) return
     const member = await fetchMember(reaction.client, reaction.message.guild.id, user.id)
     const allowedRole = member.roles.cache.find(r => r.name === 'cfs-moderator')
     if (!allowedRole) return
@@ -20,7 +20,12 @@ const exec = async (reaction, user) => {
     const message = await fetchMessage(reaction.client, reaction.message.channel.id, reaction.message.id)
 
     message.reactions.removeAll()
-    services.raw2hall.exec(message)
+
+    if (reaction.emoji.name.toString() === '🔂'){
+        message.forceAllowCfs = true
+    }
+
+    await services.raw2hall.exec(message)
 }
 
 module.exports = {

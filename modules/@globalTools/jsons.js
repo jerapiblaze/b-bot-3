@@ -99,10 +99,20 @@ const writePinned = (guild_id) => {
     }
 }
 
+global.ignoreDictionary = {}
+const updateIgnoreDic = (guild_id) => {
+    const name = guild_id ? `${guild_id}_ignoreDic.json` : '_ignoreDic.json'
+    const ignoreDic = readJson(name)
+    for (var s of Object.keys(ignoreDic)) {
+        global.ignoreDictionary[s] = ignoreDic[s]
+    }
+}
+
 updateSettings()
 updateCounters()
 updateGameData()
 updatePinned()
+updateIgnoreDic()
 
 const exec = {
     updateSettings,
@@ -112,7 +122,8 @@ const exec = {
     updateGameData,
     writeGameData,
     updatePinned,
-    writePinned
+    writePinned,
+    updateIgnoreDic
 }
 
 module.exports = {
