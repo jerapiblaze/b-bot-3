@@ -95,6 +95,8 @@ const interactionReply = async (interaction, response) => {
 
 const exec = () => {
     client.ws.on('INTERACTION_CREATE', async (interaction) => {
+        if (!interaction.name) return
+        
         client.api.interactions(interaction.id, interaction.token).callback.post({
             data: {
                 type: 5
