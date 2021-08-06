@@ -19,7 +19,7 @@ global.sleep = (milliseconds) => {
     } while (currentDate - date < milliseconds);
 }
 global.random = (min, max) => {
-    return Math.floor(Math.random() * (max - min) ) + min
+    return Math.floor(Math.random() * (max - min)) + min
 }
 global.globalTools = require(`${__myModules}/@globalTools/index.js`).exec()
 
@@ -32,7 +32,7 @@ Object.freeze(global.__botConfig)
 Object.freeze(global.__URLs)
 
 // initialize environment variables
-if (__botConfig.devmode.useDotEnv){
+if (__botConfig.devmode.useDotEnv) {
     require('dotenv').config()
 }
 
@@ -73,11 +73,11 @@ require('discord-reply');
 const client = new Discord.Client({ partials: ['MESSAGE', 'CHANNEL', 'REACTION', 'USER', 'GUILD_MEMBER'] })
 
 // initialize backup feature
-if (__botConfig.devmode.backup.enabled){
+if (__botConfig.devmode.backup.enabled) {
     const Backuper = require('./modules/@backupWorker/index')
-    
-    const backupLogger = logger.child({module: 'backup'})
-    backupLogger.info(`Auto-backup enabled (interval: ${globalTools.timeTools.ms2human(__botConfig.devmode.backup.interval, {min:3})})`)
+
+    const backupLogger = logger.child({ module: 'backup' })
+    backupLogger.info(`Auto-backup enabled (interval: ${globalTools.timeTools.ms2human(__botConfig.devmode.backup.interval, { min: 3 })})`)
 
     const backupWorker = new Backuper({
         discordToken: __botConfig.devmode.backup.useSeperatedClient ? process.env.DISCORD_BACKUPBOT_TOKEN : process.env.DISCORD_BOT_TOKEN,
@@ -108,6 +108,11 @@ if (__botConfig.devmode.backup.enabled){
         await backupWorker.restoreNow(msgid).catch(e => {
             backupLogger.error(e)
         })
+        globalTools.pageData.updateSettings()
+        globalTools.pageData.updateCounters()
+        globalTools.pageData.updateGameData()
+        globalTools.pageData.updatePinned()
+        globalTools.pageData.updateIgnoreDic()
         backupLogger.debug(`restore completed`)
     }
 
@@ -157,11 +162,14 @@ client.on('warn', (info) => {
 
 const exitProtocol = async (event, err) => {
     childLogger.info(`I'm gonna sleep now.\t${event}\t\terror:${err}`)
-    if (!(!err)){
+    if (!(!err)) {
         childLogger.error(err)
     }
     childLogger.silly(`Destroying client`)
     client.destroy()
+    if (__botConfig.devmode.backup.backupAtShutdown) {
+        await backupTask()
+    }
     destroyBackup()
     childLogger.debug('Client terminated')
     childLogger.debug('terminate signal sent')
@@ -189,10 +197,14 @@ client.login(process.env.DISCORD_BOT_TOKEN).catch(err => {
 
 // go go go
 client.on('ready', async () => {
-    if (__botConfig.devmode.globalPublish){
+    childLogger.debug('Connected to Discord !')
+    if (__botConfig.devmode.backup.restoreAtStartup) {
+        await restoreTask()
+    }
+    if (__botConfig.devmode.globalPublish) {
         await slashCommands.registerCommands()
     }
-    for (var g of __botConfig.devmode.testGuildID){
+    for (var g of __botConfig.devmode.testGuildID) {
         await slashCommands.registerCommands(g)
     }
 

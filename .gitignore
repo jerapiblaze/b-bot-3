@@ -8,3 +8,4 @@ test/*
 node_modules
 workspace.code-workspace
 .vscode
+thunder-tests

@@ -2,7 +2,8 @@
     "devmode": {
         "useDotEnv":true,
         "testGuildID": [
-            "766901221931221003"
+            "766901221931221003",
+            "748096309772419112"
         ],
         "ownerUID": "423764796375171073",
         "globalPublish": false,
@@ -16,6 +17,8 @@
             "to":{
                 "channelID":"856462446952972328"
             },
+            "restoreAtStartup":true,
+            "backupAtShutdown":false,
             "interval":43200000,
             "useSeperatedClient":false,
             "keepBackupClientAlive":false

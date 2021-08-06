@@ -30,7 +30,7 @@ const exec = (message, dicsList) => {
 
     for (let w of dictionary) {
         const word = w.toString().toLowerCase().trim()
-        if (parsedContent.search(new RegExp(`(\\W(${word})\\W)|(_${word}_)`, 'g', 'm', 'u')) === -1) continue
+        if (parsedContent.search(new RegExp(`(\\W(${word})\\W)|(_${word}_)|${word}`, 'g', 'm', 'u')) === -1) continue
         return {
             verify: true,
             word: word
