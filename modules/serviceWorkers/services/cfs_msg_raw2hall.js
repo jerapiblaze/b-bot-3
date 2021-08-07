@@ -35,21 +35,21 @@ const exec = async (message) => {
     const checkResult = await ignoreCheck(message, ignoreDiclist)
     if (checkResult.verify && (!message.forceAllowCfs)) {
         message.react('⚠')
-        target.send(`\`\`\`diff\n- ==== Blocked cfs ==== -\n[Blocked term] ${checkResult.word}\n[Original link] ${message.url}\n\`\`\``)
+        await target.send(`\`\`\`diff\n- ==== Blocked cfs ==== -\n[Blocked term] ${checkResult.word}\n[Original link] ${message.url}\n\`\`\``)
         return
+    } else {
+        target.send(message.embeds[0]).then(m => {
+            m.react('✅')
+            m.react('⛔')
+
+            const embed = new MessageEmbed(m.embeds[0])
+                .setAuthor(rawName[0])
+                .setTitle(m.id)
+
+            m.edit(embed)
+            message.react('🆗')
+        })
     }
-
-    target.send(message.embeds[0]).then(m => {
-        m.react('✅')
-        m.react('⛔')
-
-        const embed = new MessageEmbed(m.embeds[0])
-            .setAuthor(rawName[0])
-            .setTitle(m.id)
-
-        m.edit(embed)
-        message.react('🆗')
-    })
 }
 
 module.exports = {
