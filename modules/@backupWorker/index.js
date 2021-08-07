@@ -178,7 +178,7 @@ var Backup2Discord = /** @class */ (function (_super) {
                         subItem = fs.readdirSync(this._backupDir, { withFileTypes: true })
                             .filter(function (dirent) { return dirent.isDirectory(); })
                             .map(function (dirent) { return dirent.name; });
-                        tempDir = fs.mkdSync(this._workDir + "/backup_temp_" + random(1000, 9999));
+                        tempDir = fs.mkdirSync(this._workDir + "/backup_temp_" + random(1000, 9999), { recursive: true });
                         _i = 0, subItem_1 = subItem;
                         _a.label = 1;
                     case 1:
@@ -262,7 +262,8 @@ var Backup2Discord = /** @class */ (function (_super) {
                                 throw new Error("file checksum failed");
                             }
                         }
-                        tempDir = fs.mkdSync(this._workDir + "/backup_temp_" + random(1000, 9999));
+                        tempDir = fs.mkdirSync(this._workDir + "/backup_temp_" + random(1000, 9999), { recursive: true });
+                        console.log(tempDir);
                         return [4 /*yield*/, extract(filePath, { dir: tempDir })];
                     case 2:
                         _a.sent();
@@ -362,9 +363,9 @@ var Backup2Discord = /** @class */ (function (_super) {
                         return [4 /*yield*/, RemoteFileBuffer(cloudFile.url)];
                     case 6:
                         remoteFileBuffer = _a.sent();
-                        fs.writeFileSync(this._workDir + "/" + cloudFile.name + ".zip", remoteFileBuffer);
-                        this.emit("backupfileDownloaded", this._workDir + "/" + cloudFile.name + ".zip");
-                        return [4 /*yield*/, this.extractBackupFile(this._workDir + "/" + cloudFile.name + ".zip", md5)];
+                        fs.writeFileSync(this._workDir + "/" + cloudFile.name, remoteFileBuffer);
+                        this.emit("backupfileDownloaded", this._workDir + "/" + cloudFile.name);
+                        return [4 /*yield*/, this.extractBackupFile(this._workDir + "/" + cloudFile.name, md5)];
                     case 7:
                         _a.sent();
                         this.finalize();
