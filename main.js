@@ -1,3 +1,4 @@
+'use-strict'
 console.log('> Process launched <')
 console.log('> Logs are saved in ./data/logs')
 
