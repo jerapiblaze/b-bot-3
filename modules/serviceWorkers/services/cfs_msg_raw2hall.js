@@ -32,7 +32,7 @@ const exec = async (message) => {
     if (!target) return
 
     const ignoreDiclist = Array.prototype.concat(pageSettings[rawName[0]].ignoreDics, `${message.guild.id}_${rawName[0]}`)
-    const checkResult = ignoreCheck(message, ignoreDiclist)
+    const checkResult = await ignoreCheck(message, ignoreDiclist)
     if (checkResult.verify && (!message.forceAllowCfs)) {
         message.react('⚠')
         target.send(`\`\`\`diff\n- ==== Blocked cfs ==== -\n[Blocked term] ${checkResult.word}\n[Original link] ${message.url}\n\`\`\``)

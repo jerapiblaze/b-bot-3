@@ -5,7 +5,7 @@ const metadata = {
     author: `jerapiblaze`,
 }
 
-const exec = (message, dicsList) => {
+const exec = async (message, dicsList) => {
     if (!ignoreDictionary) return {
         verify: false,
         word: null
@@ -26,7 +26,7 @@ const exec = (message, dicsList) => {
     }
 
     // checks here
-    const parsedContent = JSON.stringify(message).replaceAll('_', ' ').replaceAll('-', ' ')
+    const parsedContent = JSON.stringify(message).toString().toLowerCase().split("_").join(" ").split("-").join(" ")
 
     for (let w of dictionary) {
         const word = w.toString().toLowerCase().trim()

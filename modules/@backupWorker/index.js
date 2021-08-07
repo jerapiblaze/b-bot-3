@@ -101,6 +101,9 @@ var fetchMessage = function (client, channel_id, message_id) { return __awaiter(
         }
     });
 }); };
+var random = function (min, max) {
+    return Math.floor(Math.random() * (max - min)) + min;
+};
 var Backup2Discord = /** @class */ (function (_super) {
     __extends(Backup2Discord, _super);
     function Backup2Discord(options) {
@@ -175,7 +178,7 @@ var Backup2Discord = /** @class */ (function (_super) {
                         subItem = fs.readdirSync(this._backupDir, { withFileTypes: true })
                             .filter(function (dirent) { return dirent.isDirectory(); })
                             .map(function (dirent) { return dirent.name; });
-                        tempDir = fs.mkdtempSync(this._workDir + "/backup_temp_");
+                        tempDir = fs.mkdSync(this._workDir + "/backup_temp_" + random(1000, 9999));
                         _i = 0, subItem_1 = subItem;
                         _a.label = 1;
                     case 1:
@@ -259,7 +262,7 @@ var Backup2Discord = /** @class */ (function (_super) {
                                 throw new Error("file checksum failed");
                             }
                         }
-                        tempDir = fs.mkdtempSync(this._workDir + "/backup_temp_");
+                        tempDir = fs.mkdSync(this._workDir + "/backup_temp_" + random(1000, 9999));
                         return [4 /*yield*/, extract(filePath, { dir: tempDir })];
                     case 2:
                         _a.sent();
