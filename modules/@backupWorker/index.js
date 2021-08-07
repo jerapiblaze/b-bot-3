@@ -263,7 +263,6 @@ var Backup2Discord = /** @class */ (function (_super) {
                             }
                         }
                         tempDir = fs.mkdirSync(this._workDir + "/backup_temp_" + random(1000, 9999), { recursive: true });
-                        console.log(tempDir);
                         return [4 /*yield*/, extract(filePath, { dir: tempDir })];
                     case 2:
                         _a.sent();
