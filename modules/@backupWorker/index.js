@@ -178,7 +178,8 @@ var Backup2Discord = /** @class */ (function (_super) {
                         subItem = fs.readdirSync(this._backupDir, { withFileTypes: true })
                             .filter(function (dirent) { return dirent.isDirectory(); })
                             .map(function (dirent) { return dirent.name; });
-                        tempDir = fs.mkdirSync(this._workDir + "/backup_temp_" + random(1000, 9999), { recursive: true });
+                        tempDir = this._workDir + "/backup_temp_" + random(1000, 9999);
+                        fs.mkdirSync(tempDir);
                         _i = 0, subItem_1 = subItem;
                         _a.label = 1;
                     case 1:

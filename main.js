@@ -82,8 +82,8 @@ if (__botConfig.devmode.backup.enabled) {
 
     const backupWorker = new Backuper({
         discordToken: __botConfig.devmode.backup.useSeperatedClient ? process.env.DISCORD_BACKUPBOT_TOKEN : process.env.DISCORD_BOT_TOKEN,
-        workDir: './data/@backup',
-        backupDir: './data',
+        workDir: `./data/@backup`,
+        backupDir: `./data`,
         exclude: ['.temp', '@backup', '@assets'],
         discordChannelID: __botConfig.devmode.backup.to.channelID,
         keepClientAlive: __botConfig.devmode.backup.keepBackupClientAlive,
