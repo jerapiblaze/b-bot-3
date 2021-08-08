@@ -99,8 +99,12 @@ const exec = async (message) => {
 
             fs.writeFileSync(`${__dataDir}/${guild_id.trim()}_${type}.json`, JSON.stringify(parsedContent))
 
-            globalTools.pageData.updateSettings(guild_id)
+            /* globalTools.pageData.updateSettings(guild_id)
             globalTools.pageData.updateCounters(guild_id)
+            globalTools.pageData.updateGameData(guild_id)
+            globalTools.pageData.updatePinned(guild_id)
+            globalTools.pageData.updateIgnoreDic(guild_id) */
+            globalTools.pageData.updateAll(guild_id)
 
             message.lineReplyNoMention('🔥 file imported')
         } catch (e) {

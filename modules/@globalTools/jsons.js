@@ -114,6 +114,14 @@ updateGameData()
 updatePinned()
 updateIgnoreDic()
 
+const updateAll = (id) => {
+    updateSettings(id)
+    updateCounters(id)
+    updateGameData(id)
+    updatePinned(id)
+    updateIgnoreDic(id)
+}
+
 const exec = {
     updateSettings,
     writeSettings,
@@ -123,7 +131,8 @@ const exec = {
     writeGameData,
     updatePinned,
     writePinned,
-    updateIgnoreDic
+    updateIgnoreDic,
+    updateAll
 }
 
 module.exports = {

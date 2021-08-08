@@ -109,11 +109,12 @@ if (__botConfig.devmode.backup.enabled) {
         await backupWorker.restoreNow(msgid).catch(e => {
             backupLogger.error(e)
         })
-        globalTools.pageData.updateSettings()
+        /* globalTools.pageData.updateSettings()
         globalTools.pageData.updateCounters()
         globalTools.pageData.updateGameData()
         globalTools.pageData.updatePinned()
-        globalTools.pageData.updateIgnoreDic()
+        globalTools.pageData.updateIgnoreDic() */
+        globalTools.pageData.updateAll(guild_id)
         backupLogger.debug(`restore completed`)
     }
 
