@@ -47,3 +47,13 @@ example: `123456789012345678_games.json`
     }
 }
 ```
+
+example: `123456789012345678_ignoreDic.json`
+```json
+{
+    "page_code":[
+        "can be a word, sentence",
+        "(or even a \w(regex)\w)"
+    ]
+}
+```
