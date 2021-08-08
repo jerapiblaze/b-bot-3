@@ -114,7 +114,7 @@ if (__botConfig.devmode.backup.enabled) {
         globalTools.pageData.updateGameData()
         globalTools.pageData.updatePinned()
         globalTools.pageData.updateIgnoreDic() */
-        globalTools.pageData.updateAll(guild_id)
+        globalTools.pageData.updateAll()
         backupLogger.debug(`restore completed`)
     }
 
