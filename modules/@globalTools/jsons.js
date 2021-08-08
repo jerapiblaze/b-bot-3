@@ -33,7 +33,7 @@ const updateSettings = (guild_id) => {
 }
 
 const writeSettings = (guild_id) => {
-    if (guild_id) {
+    if (!(!guild_id)) {
         writeJson(`${guild_id}_pageSettings.json`, cfsPageSettings[guild_id])
         return
     }
@@ -52,7 +52,7 @@ const updateCounters = (guild_id) => {
 }
 
 const writeCounter = (guild_id) => {
-    if (guild_id) {
+    if (!(!guild_id)) {
         writeJson(`${guild_id}_pageCounters.json`, cfsPageCounters[guild_id])
         return
     }
@@ -71,7 +71,7 @@ const updateGameData = (guild_id) => {
 }
 
 const writeGameData = (guild_id) => {
-    if (guild_id) {
+    if (!(!guild_id)) {
         writeJson(`${guild_id}_games.json`, gameData[guild_id])
         return
     }
@@ -90,7 +90,7 @@ const updatePinned = (guild_id) => {
 }
 
 const writePinned = (guild_id) => {
-    if (guild_id) {
+    if (!(!guild_id)) {
         writeJson(`${guild_id}_svpinnedmsgs.json`, serverPinnedMsgs[guild_id])
         return
     }
