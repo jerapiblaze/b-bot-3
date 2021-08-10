@@ -16,8 +16,8 @@
             "to":{
                 "channelID":"856462446952972328"
             },
-            "restoreAtStartup":true,
-            "backupAtShutdown":true,
+            "restoreAtStartup":false,
+            "backupAtShutdown":false,
             "interval":43200000,
             "useSeperatedClient":false,
             "keepBackupClientAlive":false

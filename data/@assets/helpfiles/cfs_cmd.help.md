@@ -1,7 +1,11 @@
-# các lệnh trong kênh reply
+# các lệnh dùng được ở mọi nơi
+dùng ở đâu cũng được
 
 ## command: `/cfs <page_code> <cfs_id>`
 trích dẫn cfs ra ngoài 2 kênh hall
+
+# các lệnh trong kênh reply
+chỉ sửa dụng được trong kênh reply
 
 ## command: `/<cfs_id>/<reply_content>`
 thêm reply vào cfs

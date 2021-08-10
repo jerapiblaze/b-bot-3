@@ -150,7 +150,7 @@ client.on('disconnect', () => {
     childLogger.error('Disconnected');
 })
 client.on('shardError', (error, shardID) => {
-    childLogger.error(`_shard_${shardID}: ${error}`);
+    childLogger.error(`_shard_${shardID}: ${JSON.stringify(error)}`);
 })
 client.on('shardDisconnect', (CloseEvent, id) => {
     childLogger.error(`_shard_${id} disconnected: ${CloseEvent}`)
