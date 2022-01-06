@@ -1,4 +1,5 @@
 const { MessageEmbed } = require("discord.js")
+const childLogger = logger.child({ module: 'services/cfs_control' })
 
 const metadata = {
     name: 'cfs_clearTag_Reject_Recycle',
@@ -161,6 +162,7 @@ const exec = async (reaction, user) => {
             }
             if ((!r) || (r.error)) {
                 await message.reactions.removeAll()
+                childLogger.error(`Facebook post error: ${r.error}`);
                 message.react('❌')
                 message.react('🔁')
                 return
